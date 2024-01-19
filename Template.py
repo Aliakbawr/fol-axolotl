@@ -155,8 +155,7 @@ unique_dict = np.concatenate([unique_dict, df['History'].unique()])
 unique_dict = np.concatenate([unique_dict, df['Natural Wonder'].unique()])
 unique_dict = np.concatenate([unique_dict, df['Accommodation'].unique()])
 unique_dict = np.concatenate([unique_dict, df['Language'].unique()])
-print(unique_dict)
-
+unique_dict = {k.lower(): v for k, v in unique_dict}
 
 
 if __name__ == "__main__":
