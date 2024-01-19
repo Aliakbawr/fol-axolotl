@@ -3,10 +3,10 @@ import tkinter
 import tkinter.messagebox
 from tkintermapview import TkinterMapView
 from pyswip import Prolog
+import pandas as pd
 
 
 class App(tkinter.Tk):
-
     APP_NAME = "map_view_demo.py"
     WIDTH = 800
     HEIGHT = 750  # This is now the initial size, not fixed.
@@ -27,7 +27,8 @@ class App(tkinter.Tk):
         self.text_area.grid(row=0, column=0, pady=(10, 0), padx=10, sticky="nsew")
 
         self.submit_button = tkinter.Button(self, text="Submit", command=self.process_text)
-        self.submit_button.grid(row=0, column=0, pady=(0, 10), padx=10, sticky="se")  # Placed within the same cell as text area
+        self.submit_button.grid(row=0, column=0, pady=(0, 10), padx=10,
+                                sticky="se")  # Placed within the same cell as text area
 
         # Lower part: Map Widget
         self.map_widget = TkinterMapView(self)
@@ -35,7 +36,6 @@ class App(tkinter.Tk):
 
         self.marker_list = []  # Keeping track of markers
         self.marker_path = None
-
 
     def __init__(self, *args, **kwargs):
         tkinter.Tk.__init__(self, *args, **kwargs)
@@ -52,7 +52,7 @@ class App(tkinter.Tk):
         # Upper part: Text Area and Submit Button
         self.text_area = tkinter.Text(self)
         self.text_area.grid(row=0, column=0, pady=10, padx=10, sticky="nsew")
-        
+
         self.submit_button = tkinter.Button(self, text="Submit", command=self.process_text)
         self.submit_button.grid(row=1, column=0, pady=10, sticky="ew")
 
@@ -66,10 +66,9 @@ class App(tkinter.Tk):
         print('result2 ', results)
         locations = []
         for result in results:
-            city  = result["City"]
+            city = result["City"]
             locations.append(city)
             # TODO 5: create the knowledgebase of the city and its connected destinations using Adjacency_matrix.csv
-
 
         return locations
 
@@ -78,8 +77,7 @@ class App(tkinter.Tk):
         text = self.text_area.get("1.0", "end-1c")  # Get text from text area
         locations = self.extract_locations(text)  # Extract locations (you may use a more complex method here)
 
-
-        # TODO 4: create the query based on the extracted features of user desciption 
+        # TODO 4: create the query based on the extracted features of user desciption
         ################################################################################################
         query = "destination(City,_, _, _, low, _, _, _, _, _, _, _, _)"
         results = list(prolog.query(query))
@@ -88,7 +86,7 @@ class App(tkinter.Tk):
         # TODO 6: if the number of destinations is less than 6 mark and connect them 
         ################################################################################################
         print(locations)
-        locations = ['mexico_city','rome' ,'brasilia']
+        locations = ['mexico_city', 'rome', 'brasilia']
         self.mark_locations(locations)
 
     def mark_locations(self, locations):
@@ -99,7 +97,6 @@ class App(tkinter.Tk):
                 self.marker_list.append(marker)
         self.connect_marker()
         self.map_widget.set_zoom(1)  # Adjust as necessary, 1 is usually the most zoomed out
-
 
     def connect_marker(self):
         print(self.marker_list)
@@ -125,19 +122,30 @@ class App(tkinter.Tk):
     def start(self):
         self.mainloop()
 
+
 # TODO 1: read destinations' descriptions from Destinations.csv and add them to the prolog knowledge base
 ################################################################################################
 # STEP1: Define the knowledge base of illnesses and their symptoms
 
 prolog = Prolog()
-
+df = pd.read_csv('Destinations.csv')
+df_size = df.shape[0]  # Use number of rows
 prolog.retractall("destination(_, _, _, _, _, _, _, _, _, _, _, _, _)")
-prolog.assertz("destination('Tokyo', japan, 'East Asia', temperate, high, cultural, solo, long, asian, modern, mountains, luxury, japanese)")
-prolog.assertz("destination('Ottawa', canada, 'North America', cold, medium, adventure, family_friendly, medium, european, modern, forests, mid_range, english)")
-prolog.assertz("destination('Mexico City', mexico, 'North America', temperate, low, cultural, senior, short, latin_american, ancient, mountains, budget, spanish)")
-prolog.assertz("destination('Rome', italy, 'Southern Europe', temperate, high, cultural, solo, medium, european, ancient, beaches, luxury, italian)")
-prolog.assertz("destination('Brasilia', brazil, 'South America', tropical, low, adventure, family_friendly, long, latin_american, modern, beaches, budget, portuguese)")
 
+for i in range(df_size):
+    fact = f"destination(\"{df['Destinations'][i]}\", \'{df['country'][i]}\', \'{df['region'][i]}\', \'{df['Climate'][i]}\', \'{df['Budget'][i]}\'," \
+           f" \'{df['Activity'][i]}\', \'{df['Demographics'][i]}\', \'{df['Duration'][i]}\', \'{df['Cuisine'][i]}\', \'{df['History'][i]}\', \'{df['Natural Wonder'][i]}\'," \
+           f" \'{df['Accommodation'][i]}\', \'{df['Language'][i]}\')"
+    print(fact)
+    prolog.assertz(fact)
+
+# prolog.assertz("destination('Tokyo', japan, 'East Asia', temperate, high, cultural, solo, long, asian, modern, mountains, luxury, japanese)")
+# prolog.assertz("destination('Tokyo', Japan, 'East Asia', Temperate, High, Cultural, Solo, Long, Asian, Modern, Mountains, Luxury, Japanese)")
+# prolog.assertz("destination('Ottawa', canada, 'North America', cold, medium, adventure, family_friendly, medium, european, modern, forests, mid_range, english)")
+# prolog.assertz("destination('Mexico City', mexico, 'North America', temperate, low, cultural, senior, short, latin_american, ancient, mountains, budget, spanish)")
+# prolog.assertz("destination('Mexico City', Mexico, 'North America', Temperate, Low, Cultural, Senior, Short, Latin American, Ancient, Mountains, Budget, Spanish)")
+# prolog.assertz("destination('Rome', italy, 'Southern Europe', temperate, high, cultural, solo, medium, european, ancient, beaches, luxury, italian)")
+# prolog.assertz("destination('Brasilia', brazil, 'South America', tropical, low, adventure, family_friendly, long, latin_american, modern, beaches, budget, portuguese)")
 
 
 # TODO 2: extract unique features from the Destinations.csv and save them in a dictionary
