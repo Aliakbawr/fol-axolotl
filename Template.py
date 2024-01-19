@@ -142,9 +142,25 @@ class App(tkinter.Tk):
         # Placeholder: Assuming each line in the text contains a single location name
         # TODO 3: extract key features from user's description of destinations
         ################################################################################################
+        # Convert the text to lowercase and split it into words
+        words = text.lower().split()
 
-        return [line.strip() for line in text.split('\n') if line.strip()]
+        # Convert the list of words into a numpy array
+        words_array = np.array(words)
 
+        # Create a list to store the important words found in the text
+        important_words_found = []
+
+        # Iterate over each important word
+        for word in unique_attributes:
+            # Use numpy's 'in1d' function to check if the important word is in the words array
+            if np.in1d(word, words_array):
+                important_words_found.append(word)
+
+        # Convert the list of important words found into a numpy array
+        important_words_array = np.array(important_words_found)
+
+        return important_words_array
     def start(self):
         self.mainloop()
 
@@ -167,19 +183,19 @@ for i in range(df_size):
 
 # TODO 2: extract unique features from the Destinations.csv and save them in a dictionary
 ################################################################################################
-unique_dict = df['country'].unique()
-unique_dict = np.concatenate([unique_dict, df['region'].unique()])
-unique_dict = np.concatenate([unique_dict, df['Climate'].unique()])
-unique_dict = np.concatenate([unique_dict, df['Budget'].unique()])
-unique_dict = np.concatenate([unique_dict, df['Activity'].unique()])
-unique_dict = np.concatenate([unique_dict, df['Demographics'].unique()])
-unique_dict = np.concatenate([unique_dict, df['Duration'].unique()])
-unique_dict = np.concatenate([unique_dict, df['Cuisine'].unique()])
-unique_dict = np.concatenate([unique_dict, df['History'].unique()])
-unique_dict = np.concatenate([unique_dict, df['Natural Wonder'].unique()])
-unique_dict = np.concatenate([unique_dict, df['Accommodation'].unique()])
-unique_dict = np.concatenate([unique_dict, df['Language'].unique()])
-unique_dict = {k.lower(): v for k, v in unique_dict}
+unique_attributes = df['country'].unique()
+unique_attributes = np.concatenate([unique_attributes, df['region'].unique()])
+unique_attributes = np.concatenate([unique_attributes, df['Climate'].unique()])
+unique_attributes = np.concatenate([unique_attributes, df['Budget'].unique()])
+unique_attributes = np.concatenate([unique_attributes, df['Activity'].unique()])
+unique_attributes = np.concatenate([unique_attributes, df['Demographics'].unique()])
+unique_attributes = np.concatenate([unique_attributes, df['Duration'].unique()])
+unique_attributes = np.concatenate([unique_attributes, df['Cuisine'].unique()])
+unique_attributes = np.concatenate([unique_attributes, df['History'].unique()])
+unique_attributes = np.concatenate([unique_attributes, df['Natural Wonder'].unique()])
+unique_attributes = np.concatenate([unique_attributes, df['Accommodation'].unique()])
+unique_attributes = np.concatenate([unique_attributes, df['Language'].unique()])
+unique_attributes = {k.lower(): v for k, v in unique_attributes}
 
 
 if __name__ == "__main__":
