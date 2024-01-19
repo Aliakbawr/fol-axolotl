@@ -138,19 +138,26 @@ class App(tkinter.Tk):
             self.marker_path = self.map_widget.set_path(position_list)
 
     def extract_locations(self, text):
-        """Extract locations from text. A placeholder for more complex logic."""
-        # Placeholder: Assuming each line in the text contains a single location name
         # TODO 3: extract key features from user's description of destinations
         ################################################################################################
+
         # Convert the text to lowercase and split it into words
-        words = text.lower().split()
+        text = text.lower()
+        # Define the separators
+        separators = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "+", "=",
+                      "~", "`", "{", "}", "[", "]", ";", ":", "'", "\"", "/", ".", ",",
+                      " ", "\t", "\n"]
+        # Start with the original text
+        split_text = [text]
+        # Apply the split method for each separator
+        for sep in separators:
+            split_text = [substr.split(sep) for substr in split_text]
+            split_text = [item for sublist in split_text for item in sublist]
 
         # Convert the list of words into a numpy array
-        words_array = np.array(words)
-
+        words_array = np.array(split_text)
         # Create a list to store the important words found in the text
         important_words_found = []
-
         # Iterate over each important word
         for word in unique_attributes:
             # Use numpy's 'in1d' function to check if the important word is in the words array
@@ -168,8 +175,7 @@ class App(tkinter.Tk):
 
 # TODO 1: read destinations' descriptions from Destinations.csv and add them to the prolog knowledge base
 ################################################################################################
-# STEP1: Define the knowledge base of illnesses and their symptoms
-
+# STEP1: Define the knowledge base of cities and their attributes
 prolog = Prolog()
 df = pd.read_csv('Destinations.csv')
 df_size = df.shape[0]  # Use number of rows
@@ -177,7 +183,7 @@ prolog.retractall("destination(_, _, _, _, _, _, _, _, _, _, _, _, _)")
 
 for i in range(df_size):
     fact = f"destination(\"{df['Destinations'][i]}\", \'{df['country'][i]}\', \'{df['region'][i]}\', \'{df['Climate'][i]}\', \'{df['Budget'][i]}\', " \
-           f" \'{df['Activity'][i]}\', \'{df['Demographics'][i]}\', \'{df['Duration'][i]}\', \'{df['Cuisine'][i]}\', \'{df['History'][i]}\', \'{df['Natural Wonder'][i]}\'," \
+           f" \'{df['Activity'][i]}\', \'{df['Demographics'][i]}\', \'{df['Duration'][i]}\', \'{df['Cuisine'][i]}\', \'{df['History'][i]}\', \'{df['Natural Wonder'][i]}\', " \
            f" \'{df['Accommodation'][i]}\', \'{df['Language'][i]}\')"
     prolog.assertz(fact)
 
