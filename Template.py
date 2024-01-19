@@ -1,35 +1,9 @@
 import sys
 import tkinter
 import tkinter.messagebox
-
-import numpy as np
 from tkintermapview import TkinterMapView
 from pyswip import Prolog
 import pandas as pd
-
-
-def create_query(features):
-    """Create a Prolog query based on the extracted features."""
-    # Assuming features are in the same order as DataFrame columns
-    columns = ['Destinations', 'country', 'region', 'Climate', 'Budget', 'Activity', 'Demographics', 'Duration',
-               'Cuisine', 'History', 'Natural Wonder', 'Accommodation', 'Language']
-
-    # Start building the query
-    query = "destination("
-
-    # Add each feature to the query
-    for i in range(len(columns)):
-        if i < len(features):
-            # If there is a feature for this column, add it to the query
-            query += f"\'{features[i]}\', "
-        else:
-            # If there is no feature for this column, use a variable
-            query += f"{columns[i]}, "
-
-    # Remove trailing comma and space, add closing parenthesis
-    query = query[:-2] + ")"
-
-    return query
 
 
 class App(tkinter.Tk):
@@ -105,11 +79,11 @@ class App(tkinter.Tk):
 
         # TODO 4: create the query based on the extracted features of user desciption
         ################################################################################################
-        query = create_query(locations)
+        query = "destination(City,_, _, _, low, _, _, _, _, _, _, _, _)"
         results = list(prolog.query(query))
         print(results)
         locations = self.check_connections(results)
-        # TODO 6: if the number of destinations is less than 6 mark and connect them 
+        # TODO 6: if the number of destinations is less than 6 mark and connect them
         ################################################################################################
         print(locations)
         locations = ['mexico_city', 'rome', 'brasilia']
@@ -138,9 +112,10 @@ class App(tkinter.Tk):
             self.marker_path = self.map_widget.set_path(position_list)
 
     def extract_locations(self, text):
+        """Extract locations from text. A placeholder for more complex logic."""
+        # Placeholder: Assuming each line in the text contains a single location name
         # TODO 3: extract key features from user's description of destinations
         ################################################################################################
-
         # Convert the text to lowercase and split it into words
         text = text.lower()
         # Define the separators
@@ -154,20 +129,27 @@ class App(tkinter.Tk):
             split_text = [substr.split(sep) for substr in split_text]
             split_text = [item for sublist in split_text for item in sublist]
 
-        # Convert the list of words into a numpy array
-        words_array = np.array(split_text)
-        # Create a list to store the important words found in the text
-        important_words_found = []
-        # Iterate over each important word
-        for word in unique_attributes:
-            # Use numpy's 'in1d' function to check if the important word is in the words array
-            if np.in1d(word, words_array):
-                important_words_found.append(word)
+        two_word_combinations = [" ".join(pair) for pair in zip(split_text, split_text[1:])]
 
-        # Convert the list of important words found into a numpy array
-        important_words_array = np.array(important_words_found)
+        # Create a dictionary to store the important words found in the text
+        important_words_found = {'country': [], 'region': [], 'climate': [],
+                                 'budget': [], 'activity': [], 'demographics': [],
+                                 'duration': [], 'cuisine': [], 'history': [],
+                                 'natural wonder': [], 'accommodation': [], 'language': []}
 
-        return important_words_array
+        # Iterate over each text word
+        for word in split_text:
+            for key in unique_attributes:
+                for value in unique_attributes[key]:
+                    if word == value:
+                        important_words_found[key].append(word)
+        for word in two_word_combinations:
+            for key in unique_attributes:
+                for value in unique_attributes[key]:
+                    if word == value:
+                        important_words_found[key].append(word)
+
+        return important_words_found
 
     def start(self):
         self.mainloop()
@@ -175,7 +157,7 @@ class App(tkinter.Tk):
 
 # TODO 1: read destinations' descriptions from Destinations.csv and add them to the prolog knowledge base
 ################################################################################################
-# STEP1: Define the knowledge base of cities and their attributes
+# STEP1: Define the knowledge base of illnesses and their symptoms
 prolog = Prolog()
 df = pd.read_csv('Destinations.csv')
 df_size = df.shape[0]  # Use number of rows
@@ -187,23 +169,20 @@ for i in range(df_size):
            f" \'{df['Accommodation'][i]}\', \'{df['Language'][i]}\')"
     prolog.assertz(fact)
 
-
 # TODO 2: extract unique features from the Destinations.csv and save them in a dictionary
 ################################################################################################
-unique_attributes = {'country': df['country'].unique().tolist(),
-                     'region': df['region'].unique().tolist(),
-                     'climate': df['Climate'].unique().tolist(),
-                     'budget': df['Budget'].unique().tolist(),
-                     'activity': df['Activity'].unique().tolist(),
-                     'demographics': df['Demographics'].unique().tolist(),
-                     'duration': df['Duration'].unique().tolist(),
-                     'cuisine': df['Cuisine'].unique().tolist(),
-                     'history': df['History'].unique().tolist(),
-                     'natural wonder': df['Natural Wonder'].unique().tolist(),
-                     'accommodation': df['Accommodation'].unique().tolist(),
-                     'language': df['Language'].unique().tolist()}
-print(unique_attributes)
-
+unique_attributes = {'country': [item.lower() for item in df['country'].unique().tolist()],
+                     'region': [item.lower() for item in df['region'].unique().tolist()],
+                     'climate': [item.lower() for item in df['Climate'].unique().tolist()],
+                     'budget': [item.lower() for item in df['Budget'].unique().tolist()],
+                     'activity': [item.lower() for item in df['Activity'].unique().tolist()],
+                     'demographics': [item.lower() for item in df['Demographics'].unique().tolist()],
+                     'duration': [item.lower() for item in df['Duration'].unique().tolist()],
+                     'cuisine': [item.lower() for item in df['Cuisine'].unique().tolist()],
+                     'history': [item.lower() for item in df['History'].unique().tolist()],
+                     'natural wonder': [item.lower() for item in df['Natural Wonder'].unique().tolist()],
+                     'accommodation': [item.lower() for item in df['Accommodation'].unique().tolist()],
+                     'language': [item.lower() for item in df['Language'].unique().tolist()]}
 
 if __name__ == "__main__":
     app = App()
