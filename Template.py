@@ -8,6 +8,30 @@ from pyswip import Prolog
 import pandas as pd
 
 
+def create_query(features):
+    """Create a Prolog query based on the extracted features."""
+    # Assuming features are in the same order as DataFrame columns
+    columns = ['Destinations', 'country', 'region', 'Climate', 'Budget', 'Activity', 'Demographics', 'Duration',
+               'Cuisine', 'History', 'Natural Wonder', 'Accommodation', 'Language']
+
+    # Start building the query
+    query = "destination("
+
+    # Add each feature to the query
+    for i in range(len(columns)):
+        if i < len(features):
+            # If there is a feature for this column, add it to the query
+            query += f"\'{features[i]}\', "
+        else:
+            # If there is no feature for this column, use a variable
+            query += f"{columns[i]}, "
+
+    # Remove trailing comma and space, add closing parenthesis
+    query = query[:-2] + ")"
+
+    return query
+
+
 class App(tkinter.Tk):
     APP_NAME = "map_view_demo.py"
     WIDTH = 800
@@ -81,7 +105,7 @@ class App(tkinter.Tk):
 
         # TODO 4: create the query based on the extracted features of user desciption
         ################################################################################################
-        query = "destination(City,_, _, _, low, _, _, _, _, _, _, _, _)"
+        query = create_query(locations)
         results = list(prolog.query(query))
         print(results)
         locations = self.check_connections(results)
