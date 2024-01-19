@@ -154,20 +154,20 @@ class App(tkinter.Tk):
             split_text = [substr.split(sep) for substr in split_text]
             split_text = [item for sublist in split_text for item in sublist]
 
-        # Convert the list of words into a numpy array
-        words_array = np.array(split_text)
-        # Create a list to store the important words found in the text
-        important_words_found = []
-        # Iterate over each important word
-        for word in unique_attributes:
-            # Use numpy's 'in1d' function to check if the important word is in the words array
-            if np.in1d(word, words_array):
-                important_words_found.append(word)
+        # Create a dictionary to store the important words found in the text
+        important_words_found = {'country': [],	'region': [], 'climate': [],
+                                 'budget': [], 'activity': [], 'demographics': [],
+                                 'duration': [], 'cuisine': [], 'history': [],
+                                 'natural wonder': [], 'accommodation': [], 'language': []}
 
-        # Convert the list of important words found into a numpy array
-        important_words_array = np.array(important_words_found)
+        # Iterate over each text word
+        for word in split_text:
+            for key in unique_attributes:
+                for value in unique_attributes[key]:
+                    if word == value:
+                        important_words_found[key].append(word)
 
-        return important_words_array
+        return important_words_found
 
     def start(self):
         self.mainloop()
@@ -190,19 +190,18 @@ for i in range(df_size):
 
 # TODO 2: extract unique features from the Destinations.csv and save them in a dictionary
 ################################################################################################
-unique_attributes = {'country': df['country'].unique().tolist(),
-                     'region': df['region'].unique().tolist(),
-                     'climate': df['Climate'].unique().tolist(),
-                     'budget': df['Budget'].unique().tolist(),
-                     'activity': df['Activity'].unique().tolist(),
-                     'demographics': df['Demographics'].unique().tolist(),
-                     'duration': df['Duration'].unique().tolist(),
-                     'cuisine': df['Cuisine'].unique().tolist(),
-                     'history': df['History'].unique().tolist(),
-                     'natural wonder': df['Natural Wonder'].unique().tolist(),
-                     'accommodation': df['Accommodation'].unique().tolist(),
-                     'language': df['Language'].unique().tolist()}
-print(unique_attributes)
+unique_attributes = {'country': [item.lower() for item in df['country'].unique().tolist()],
+                     'region': [item.lower() for item in df['region'].unique().tolist()],
+                     'climate': [item.lower() for item in df['Climate'].unique().tolist()],
+                     'budget': [item.lower() for item in df['Budget'].unique().tolist()],
+                     'activity': [item.lower() for item in df['Activity'].unique().tolist()],
+                     'demographics': [item.lower() for item in df['Demographics'].unique().tolist()],
+                     'duration': [item.lower() for item in df['Duration'].unique().tolist()],
+                     'cuisine': [item.lower() for item in df['Cuisine'].unique().tolist()],
+                     'history': [item.lower() for item in df['History'].unique().tolist()],
+                     'natural wonder': [item.lower() for item in df['Natural Wonder'].unique().tolist()],
+                     'accommodation': [item.lower() for item in df['Accommodation'].unique().tolist()],
+                     'language': [item.lower() for item in df['Language'].unique().tolist()]}
 
 
 if __name__ == "__main__":
