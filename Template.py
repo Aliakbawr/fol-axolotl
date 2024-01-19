@@ -133,23 +133,27 @@ df_size = df.shape[0]  # Use number of rows
 prolog.retractall("destination(_, _, _, _, _, _, _, _, _, _, _, _, _)")
 
 for i in range(df_size):
-    fact = f"destination(\"{df['Destinations'][i]}\", \'{df['country'][i]}\', \'{df['region'][i]}\', \'{df['Climate'][i]}\', \'{df['Budget'][i]}\'," \
+    fact = f"destination(\"{df['Destinations'][i]}\", \'{df['country'][i]}\', \'{df['region'][i]}\', \'{df['Climate'][i]}\', \'{df['Budget'][i]}\', " \
            f" \'{df['Activity'][i]}\', \'{df['Demographics'][i]}\', \'{df['Duration'][i]}\', \'{df['Cuisine'][i]}\', \'{df['History'][i]}\', \'{df['Natural Wonder'][i]}\'," \
            f" \'{df['Accommodation'][i]}\', \'{df['Language'][i]}\')"
     print(fact)
     prolog.assertz(fact)
 
-# prolog.assertz("destination('Tokyo', japan, 'East Asia', temperate, high, cultural, solo, long, asian, modern, mountains, luxury, japanese)")
-# prolog.assertz("destination('Tokyo', Japan, 'East Asia', Temperate, High, Cultural, Solo, Long, Asian, Modern, Mountains, Luxury, Japanese)")
-# prolog.assertz("destination('Ottawa', canada, 'North America', cold, medium, adventure, family_friendly, medium, european, modern, forests, mid_range, english)")
-# prolog.assertz("destination('Mexico City', mexico, 'North America', temperate, low, cultural, senior, short, latin_american, ancient, mountains, budget, spanish)")
-# prolog.assertz("destination('Mexico City', Mexico, 'North America', Temperate, Low, Cultural, Senior, Short, Latin American, Ancient, Mountains, Budget, Spanish)")
-# prolog.assertz("destination('Rome', italy, 'Southern Europe', temperate, high, cultural, solo, medium, european, ancient, beaches, luxury, italian)")
-# prolog.assertz("destination('Brasilia', brazil, 'South America', tropical, low, adventure, family_friendly, long, latin_american, modern, beaches, budget, portuguese)")
-
 
 # TODO 2: extract unique features from the Destinations.csv and save them in a dictionary
 ################################################################################################
+unique_dict = df['country'].unique()
+unique_dict.__add__(df['region'].unique())
+unique_dict.__add__(df['Climate'].unique())
+unique_dict.__add__(df['Budget'].unique())
+unique_dict.__add__(df['Activity'].unique())
+unique_dict.__add__(df['Demographics'].unique())
+unique_dict.__add__(df['Duration'].unique())
+unique_dict.__add__(df['Cuisine'].unique())
+unique_dict.__add__(df['History'].unique())
+unique_dict.__add__(df['Natural Wonder'].unique())
+unique_dict.__add__(df['Accommodation'].unique())
+unique_dict.__add__(df['Language'].unique())
 
 
 if __name__ == "__main__":
