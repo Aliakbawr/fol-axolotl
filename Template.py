@@ -1,6 +1,8 @@
 import sys
 import tkinter
 import tkinter.messagebox
+
+import numpy as np
 from tkintermapview import TkinterMapView
 from pyswip import Prolog
 import pandas as pd
@@ -136,24 +138,25 @@ for i in range(df_size):
     fact = f"destination(\"{df['Destinations'][i]}\", \'{df['country'][i]}\', \'{df['region'][i]}\', \'{df['Climate'][i]}\', \'{df['Budget'][i]}\', " \
            f" \'{df['Activity'][i]}\', \'{df['Demographics'][i]}\', \'{df['Duration'][i]}\', \'{df['Cuisine'][i]}\', \'{df['History'][i]}\', \'{df['Natural Wonder'][i]}\'," \
            f" \'{df['Accommodation'][i]}\', \'{df['Language'][i]}\')"
-    print(fact)
     prolog.assertz(fact)
 
 
 # TODO 2: extract unique features from the Destinations.csv and save them in a dictionary
 ################################################################################################
 unique_dict = df['country'].unique()
-unique_dict.__add__(df['region'].unique())
-unique_dict.__add__(df['Climate'].unique())
-unique_dict.__add__(df['Budget'].unique())
-unique_dict.__add__(df['Activity'].unique())
-unique_dict.__add__(df['Demographics'].unique())
-unique_dict.__add__(df['Duration'].unique())
-unique_dict.__add__(df['Cuisine'].unique())
-unique_dict.__add__(df['History'].unique())
-unique_dict.__add__(df['Natural Wonder'].unique())
-unique_dict.__add__(df['Accommodation'].unique())
-unique_dict.__add__(df['Language'].unique())
+unique_dict = np.concatenate([unique_dict, df['region'].unique()])
+unique_dict = np.concatenate([unique_dict, df['Climate'].unique()])
+unique_dict = np.concatenate([unique_dict, df['Budget'].unique()])
+unique_dict = np.concatenate([unique_dict, df['Activity'].unique()])
+unique_dict = np.concatenate([unique_dict, df['Demographics'].unique()])
+unique_dict = np.concatenate([unique_dict, df['Duration'].unique()])
+unique_dict = np.concatenate([unique_dict, df['Cuisine'].unique()])
+unique_dict = np.concatenate([unique_dict, df['History'].unique()])
+unique_dict = np.concatenate([unique_dict, df['Natural Wonder'].unique()])
+unique_dict = np.concatenate([unique_dict, df['Accommodation'].unique()])
+unique_dict = np.concatenate([unique_dict, df['Language'].unique()])
+print(unique_dict)
+
 
 
 if __name__ == "__main__":
