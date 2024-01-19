@@ -190,20 +190,19 @@ for i in range(df_size):
 
 # TODO 2: extract unique features from the Destinations.csv and save them in a dictionary
 ################################################################################################
-unique_attributes = df['country'].unique()
-unique_attributes = np.concatenate([unique_attributes, df['region'].unique()])
-unique_attributes = np.concatenate([unique_attributes, df['Climate'].unique()])
-unique_attributes = np.concatenate([unique_attributes, df['Budget'].unique()])
-unique_attributes = np.concatenate([unique_attributes, df['Activity'].unique()])
-unique_attributes = np.concatenate([unique_attributes, df['Demographics'].unique()])
-unique_attributes = np.concatenate([unique_attributes, df['Duration'].unique()])
-unique_attributes = np.concatenate([unique_attributes, df['Cuisine'].unique()])
-unique_attributes = np.concatenate([unique_attributes, df['History'].unique()])
-unique_attributes = np.concatenate([unique_attributes, df['Natural Wonder'].unique()])
-unique_attributes = np.concatenate([unique_attributes, df['Accommodation'].unique()])
-unique_attributes = np.concatenate([unique_attributes, df['Language'].unique()])
-unique_attributes = np.array(unique_attributes, dtype=str)
-unique_attributes = np.char.lower(unique_attributes)
+unique_attributes = {'country': df['country'].unique().tolist(),
+                     'region': df['region'].unique().tolist(),
+                     'climate': df['Climate'].unique().tolist(),
+                     'budget': df['Budget'].unique().tolist(),
+                     'activity': df['Activity'].unique().tolist(),
+                     'demographics': df['Demographics'].unique().tolist(),
+                     'duration': df['Duration'].unique().tolist(),
+                     'cuisine': df['Cuisine'].unique().tolist(),
+                     'history': df['History'].unique().tolist(),
+                     'natural wonder': df['Natural Wonder'].unique().tolist(),
+                     'accommodation': df['Accommodation'].unique().tolist(),
+                     'language': df['Language'].unique().tolist()}
+print(unique_attributes)
 
 
 if __name__ == "__main__":
