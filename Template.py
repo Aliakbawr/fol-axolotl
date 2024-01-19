@@ -137,6 +137,7 @@ class App(tkinter.Tk):
         important_words_array = np.array(important_words_found)
 
         return important_words_array
+
     def start(self):
         self.mainloop()
 
@@ -171,7 +172,8 @@ unique_attributes = np.concatenate([unique_attributes, df['History'].unique()])
 unique_attributes = np.concatenate([unique_attributes, df['Natural Wonder'].unique()])
 unique_attributes = np.concatenate([unique_attributes, df['Accommodation'].unique()])
 unique_attributes = np.concatenate([unique_attributes, df['Language'].unique()])
-unique_attributes = {k.lower(): v for k, v in unique_attributes}
+unique_attributes = np.array(unique_attributes, dtype=str)
+unique_attributes = np.char.lower(unique_attributes)
 
 
 if __name__ == "__main__":
