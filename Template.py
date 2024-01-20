@@ -69,18 +69,21 @@ class App(tkinter.Tk):
         print('result2 ', results)
         locations = []
         AdjMatrixDf = pd.read_csv("Adjacency_matrix.csv")
+
+        prolog.retractall("connected(_, _)")
+        prolog.assertz("path(X, Y) :- connected(X, Y)")  # Direct connection
+        prolog.assertz("path(X, Y) :- connected(X, Z), path(Z, Y)")  # Indirect connection
+
         for result in results:
             city = result["City"]
             locations.append(city)
             # TODO 5: create the knowledgebase of the city and its connected destinations using Adjacency_matrix.csv
 
-            for i in range(len(AdjMatrixDf)):
-                for j in range(len(AdjMatrixDf[i])):
-                    if AdjMatrixDf[i][j] == 1:
-                        prolog.assertz("connected(city{}, city{})".format(i + 1, j + 1))
+            for k in range(len(AdjMatrixDf.iloc[0]) - 1):
+                for j in range(len(AdjMatrixDf.iloc[0]) - 1):
+                    if AdjMatrixDf.iloc[k, j] == 1:
+                        prolog.assertz("connected(city{}, city{})".format(k, j))
 
-            prolog.assertz("path(X, Y) :- connected(X, Y).")  # Direct connection
-            prolog.assertz("path(X, Y) :- connected(X, Z), path(Z, Y).")  # Indirect connection
 
         return locations
 
@@ -100,12 +103,11 @@ class App(tkinter.Tk):
                 values_list.append("_")
 
         values_str = ", ".join(values_list)
-        query_str = f"destination(Destination, {values_str})"
+        query_str = f"destination(City, {values_str})"
         results = list(prolog.query(query_str))
         print(results)
 
-        locations = ['mexico_city', 'rome', 'brasilia']
-        # locations = self.check_connections(results)
+        locations = self.check_connections(results)
         # TODO 6: if the number of destinations is less than 6 mark and connect them
         ################################################################################################
         if len(locations) > 5:
@@ -113,7 +115,6 @@ class App(tkinter.Tk):
             self.text_area.delete('1.0', tkinter.END)
         else:
             self.mark_locations(locations)
-
 
     def mark_locations(self, locations):
         """Mark extracted locations on the map."""
@@ -196,10 +197,7 @@ for i in range(df_size):
            f" \'{df['Activity'][i]}\', \'{df['Demographics'][i]}\', \'{df['Duration'][i]}\', \'{df['Cuisine'][i]}\', \'{df['History'][i]}\', \'{df['Natural Wonder'][i]}\', " \
            f" \'{df['Accommodation'][i]}\', \'{df['Language'][i]}\')"
     prolog.assertz(fact)
-query = 'destination(City,\"Japan\",\'East Asia\',\'Temperate\',\'High\',\'Cultural\',\'Solo\',\'Long\',\'Asian\',\'Modern\',\'Mountains\',\'Luxury\',\'Japanese\')'
-resault = list(prolog.query(query))
-for resault in resault:
-    print(resault['City'])
+
 # TODO 2: extract unique features from the Destinations.csv and save them in a dictionary
 ################################################################################################
 unique_attributes = {'country': [item.lower() for item in df['country'].unique().tolist()],
