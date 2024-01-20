@@ -108,12 +108,11 @@ class App(tkinter.Tk):
         # locations = self.check_connections(results)
         # TODO 6: if the number of destinations is less than 6 mark and connect them
         ################################################################################################
-        if len(locations) > 5:
+        if len(results) > 5:
             tkinter.messagebox.showinfo("Too many destinations", "Information is not enough for specific destinations")
             self.text_area.delete('1.0', tkinter.END)
         else:
             self.mark_locations(locations)
-
 
     def mark_locations(self, locations):
         """Mark extracted locations on the map."""
@@ -138,8 +137,6 @@ class App(tkinter.Tk):
             self.marker_path = self.map_widget.set_path(position_list)
 
     def extract_locations(self, text):
-        """Extract locations from text. A placeholder for more complex logic."""
-        # Placeholder: Assuming each line in the text contains a single location name
         # TODO 3: extract key features from user's description of destinations
         ################################################################################################
         # Convert the text to lowercase and split it into words
@@ -184,7 +181,6 @@ class App(tkinter.Tk):
 
 # TODO 1: read destinations' descriptions from Destinations.csv and add them to the prolog knowledge base
 ################################################################################################
-# STEP1: Define the knowledge base of illnesses and their symptoms
 prolog = Prolog()
 df = pd.read_csv('Destinations.csv')
 df = df.apply(lambda s: s.str.lower() if s.dtype == 'object' else s)
@@ -192,14 +188,12 @@ df_size = df.shape[0]  # Use number of rows
 prolog.retractall("destination(_, _, _, _, _, _, _, _, _, _, _, _, _)")
 
 for i in range(df_size):
-    fact = f"destination(\"{df['Destinations'][i]}\", \'{df['country'][i]}\', \'{df['region'][i]}\', \'{df['Climate'][i]}\', \'{df['Budget'][i]}\', " \
-           f" \'{df['Activity'][i]}\', \'{df['Demographics'][i]}\', \'{df['Duration'][i]}\', \'{df['Cuisine'][i]}\', \'{df['History'][i]}\', \'{df['Natural Wonder'][i]}\', " \
+    fact = f"destination(\"{df['Destinations'][i]}\", \'{df['country'][i]}\', \'{df['region'][i]}\'," \
+           f" \'{df['Climate'][i]}\', \'{df['Budget'][i]}\', \'{df['Activity'][i]}\', \'{df['Demographics'][i]}\'," \
+           f" \'{df['Duration'][i]}\', \'{df['Cuisine'][i]}\', \'{df['History'][i]}\', \'{df['Natural Wonder'][i]}\'," \
            f" \'{df['Accommodation'][i]}\', \'{df['Language'][i]}\')"
     prolog.assertz(fact)
-query = 'destination(City,\"Japan\",\'East Asia\',\'Temperate\',\'High\',\'Cultural\',\'Solo\',\'Long\',\'Asian\',\'Modern\',\'Mountains\',\'Luxury\',\'Japanese\')'
-resault = list(prolog.query(query))
-for resault in resault:
-    print(resault['City'])
+
 # TODO 2: extract unique features from the Destinations.csv and save them in a dictionary
 ################################################################################################
 unique_attributes = {'country': [item.lower() for item in df['country'].unique().tolist()],
