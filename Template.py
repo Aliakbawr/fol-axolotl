@@ -94,10 +94,19 @@ class App(tkinter.Tk):
     def check_connections(self, results):
         print('result2 ', results)
         locations = []
+        AdjMatrixDf = pd.read_csv("Adjacency_matrix.csv")
         for result in results:
             city = result["City"]
             locations.append(city)
             # TODO 5: create the knowledgebase of the city and its connected destinations using Adjacency_matrix.csv
+
+            for i in range(len(AdjMatrixDf)):
+                for j in range(len(AdjMatrixDf[i])):
+                    if AdjMatrixDf[i][j] == 1:
+                        prolog.assertz("connected(city{}, city{})".format(i + 1, j + 1))
+
+            prolog.assertz("path(X, Y) :- connected(X, Y).")  # Direct connection
+            prolog.assertz("path(X, Y) :- connected(X, Z), path(Z, Y).")  # Indirect connection
 
         return locations
 
