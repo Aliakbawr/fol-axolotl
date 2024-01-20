@@ -6,32 +6,6 @@ from pyswip import Prolog
 import pandas as pd
 
 
-def create_query(user_input, df):
-    """Create a Prolog query based on the user's input."""
-    # Split the user input into features
-    input_features = [feature.strip().lower() for feature in user_input.split()]
-
-    # Start building the query
-    query = "destination("
-
-    # Add each feature to the query
-    for column in df.columns:
-        # Check if the feature exists in the user's input
-        feature = next((f for f in input_features if f in df[column].str.lower().tolist()), None)
-
-        if feature is not None:
-            # If the feature exists, add it to the query
-            query += f"\'{feature}\', "
-        else:
-            # If the feature does not exist, use a placeholder
-            query += "_, "
-
-    # Remove trailing comma and space, add closing parenthesis
-    query = query[:-2] + ")"
-
-    return query
-
-
 class App(tkinter.Tk):
     APP_NAME = "map_view_demo.py"
     WIDTH = 800
@@ -108,10 +82,24 @@ class App(tkinter.Tk):
 
         # TODO 4: create the query based on the extracted features of user description
         ################################################################################################
-        # query = create_query(locations, df)
-        # "destination(City,_, _, _, low, _, _, _, _, _, _, _, _)"
-        # results = list(prolog.query(query))
-        # print(results)
+        # Initialize an empty list to store the values
+        values_list = []
+        # Iterate over the dictionary
+        for values in locations.values():
+            # If the value list is not empty, append the first element to the list
+            if values:
+                values_list.append(f"'{values[0]}'")  # Add quotes around the value
+            else:
+                # If the value list is empty, append '_'
+                values_list.append("_")
+        # Join the list into a string with ', ' as the separator
+        values_str = ", ".join(values_list)
+        # Format values_str as a Prolog fact
+        prolog_fact = f"destination(Destination, {values_str})"
+        print(prolog_fact)
+
+        results = list(prolog.query(prolog_fact))
+        print(results)
 
         locations = ['mexico_city', 'rome', 'brasilia']
         # locations = self.check_connections(results)
@@ -196,6 +184,7 @@ class App(tkinter.Tk):
 # STEP1: Define the knowledge base of illnesses and their symptoms
 prolog = Prolog()
 df = pd.read_csv('Destinations.csv')
+df = df.apply(lambda s: s.str.lower() if s.dtype == 'object' else s)
 df_size = df.shape[0]  # Use number of rows
 prolog.retractall("destination(_, _, _, _, _, _, _, _, _, _, _, _, _)")
 
@@ -204,7 +193,10 @@ for i in range(df_size):
            f" \'{df['Activity'][i]}\', \'{df['Demographics'][i]}\', \'{df['Duration'][i]}\', \'{df['Cuisine'][i]}\', \'{df['History'][i]}\', \'{df['Natural Wonder'][i]}\', " \
            f" \'{df['Accommodation'][i]}\', \'{df['Language'][i]}\')"
     prolog.assertz(fact)
-
+query = 'destination(City,\"Japan\",\'East Asia\',\'Temperate\',\'High\',\'Cultural\',\'Solo\',\'Long\',\'Asian\',\'Modern\',\'Mountains\',\'Luxury\',\'Japanese\')'
+resault = list(prolog.query(query))
+for resault in resault:
+    print(resault['City'])
 # TODO 2: extract unique features from the Destinations.csv and save them in a dictionary
 ################################################################################################
 unique_attributes = {'country': [item.lower() for item in df['country'].unique().tolist()],
