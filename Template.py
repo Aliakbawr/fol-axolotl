@@ -6,6 +6,32 @@ from pyswip import Prolog
 import pandas as pd
 
 
+def create_query(user_input, df):
+    """Create a Prolog query based on the user's input."""
+    # Split the user input into features
+    input_features = [feature.strip().lower() for feature in user_input.split()]
+
+    # Start building the query
+    query = "destination("
+
+    # Add each feature to the query
+    for column in df.columns:
+        # Check if the feature exists in the user's input
+        feature = next((f for f in input_features if f in df[column].str.lower().tolist()), None)
+
+        if feature is not None:
+            # If the feature exists, add it to the query
+            query += f"\'{feature}\', "
+        else:
+            # If the feature does not exist, use a placeholder
+            query += "_, "
+
+    # Remove trailing comma and space, add closing parenthesis
+    query = query[:-2] + ")"
+
+    return query
+
+
 class App(tkinter.Tk):
     APP_NAME = "map_view_demo.py"
     WIDTH = 800
@@ -26,7 +52,10 @@ class App(tkinter.Tk):
         self.text_area = tkinter.Text(self, height=5)  # Reduced height for text area
         self.text_area.grid(row=0, column=0, pady=(10, 0), padx=10, sticky="nsew")
 
+        # In your GUI initialization code, link this function to a button
         self.submit_button = tkinter.Button(self, text="Submit", command=self.process_text)
+        self.submit_button.pack()
+
         self.submit_button.grid(row=0, column=0, pady=(0, 10), padx=10,
                                 sticky="se")  # Placed within the same cell as text area
 
@@ -73,21 +102,27 @@ class App(tkinter.Tk):
         return locations
 
     def process_text(self):
-        """Extract locations from the text area and mark them on the map."""
-        text = self.text_area.get("1.0", "end-1c")  # Get text from text area
+        # Extract locations from the user's input
+        text = self.text_area.get("1.0", 'end-1c')
         locations = self.extract_locations(text)  # Extract locations (you may use a more complex method here)
 
-        # TODO 4: create the query based on the extracted features of user desciption
+        # TODO 4: create the query based on the extracted features of user description
         ################################################################################################
-        query = "destination(City,_, _, _, low, _, _, _, _, _, _, _, _)"
-        results = list(prolog.query(query))
-        print(results)
-        locations = self.check_connections(results)
+        # query = create_query(locations, df)
+        # "destination(City,_, _, _, low, _, _, _, _, _, _, _, _)"
+        # results = list(prolog.query(query))
+        # print(results)
+
+        locations = ['mexico_city', 'rome', 'brasilia']
+        # locations = self.check_connections(results)
         # TODO 6: if the number of destinations is less than 6 mark and connect them
         ################################################################################################
-        print(locations)
-        locations = ['mexico_city', 'rome', 'brasilia']
-        self.mark_locations(locations)
+        if len(locations) > 5:
+            tkinter.messagebox.showinfo("Too many destinations", "Information is not enough for specific destinations")
+            self.text_area.delete('1.0', tkinter.END)
+        else:
+            self.mark_locations(locations)
+
 
     def mark_locations(self, locations):
         """Mark extracted locations on the map."""
@@ -122,6 +157,7 @@ class App(tkinter.Tk):
         separators = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "+", "=",
                       "~", "`", "{", "}", "[", "]", ";", ":", "'", "\"", "/", ".", ",",
                       " ", "\t", "\n"]
+
         # Start with the original text
         split_text = [text]
         # Apply the split method for each separator
