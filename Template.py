@@ -93,21 +93,15 @@ class App(tkinter.Tk):
         ################################################################################################
         # Initialize an empty list to store the values
         values_list = []
-        # Iterate over the dictionary
         for values in locations.values():
-            # If the value list is not empty, append the first element to the list
             if values:
-                values_list.append(f"'{values[0]}'")  # Add quotes around the value
+                values_list.append(f"'{values[0]}'")
             else:
-                # If the value list is empty, append '_'
                 values_list.append("_")
-        # Join the list into a string with ', ' as the separator
-        values_str = ", ".join(values_list)
-        # Format values_str as a Prolog fact
-        prolog_fact = f"destination(Destination, {values_str})"
-        print(prolog_fact)
 
-        results = list(prolog.query(prolog_fact))
+        values_str = ", ".join(values_list)
+        query_str = f"destination(Destination, {values_str})"
+        results = list(prolog.query(query_str))
         print(results)
 
         locations = ['mexico_city', 'rome', 'brasilia']
