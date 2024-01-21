@@ -88,7 +88,7 @@ class App(tkinter.Tk):
 
         # Assert Prolog rules for direct and indirect connections
         prolog.assertz("path(X, Y) :- connected(X, Y)")  # Direct connection
-        prolog.assertz("path(X, Y) :- connected(X, Z), connected(Z, Y)")  # Indirect connection (recursive)
+        prolog.assertz("path(X, Y) :- connected(X, Z), path(Z, Y)")  # Indirect connection (recursive)
 
         for j in range(AdjMatrixDf.shape[0]):
             for k in range(AdjMatrixDf.shape[1]):
@@ -112,7 +112,7 @@ class App(tkinter.Tk):
                     answer = prolog.query(query)
                     if start_city != end_city and answer:
                         print("Path found between {} and {}".format(start_city, end_city))
-                        # connected_cities.append(start_city)
+                        connected_cities.append(start_city)
                         connected_cities.append(end_city)
 
                     else:
