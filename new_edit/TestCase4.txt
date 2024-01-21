@@ -1,0 +1,52 @@
+Input:
+
+Embarking on a medium-length journey, I aim to immerse myself in the cultural depth of ancient European cities. With a mid-range budget, my focus will be on experiencing the rich tapestry of history and art that defines Europe's storied past. This adventure will blend the allure of ancient heritage with the comfort of mid-range accommodations, creating a balanced and enriching cultural exploration.
+
+1st Query:
+['Madrid', 'Athens', 'Lisbon', 'Florence', 'Marseille']
+
+
+Graphs:
+
+Madrid
+	 Montevideo 	 ['Canberra', 'Jerusalem', 'Bergen']
+	 Islamabad 	 ['Athens', 'Brussels', 'Kyiv', 'Bern', 'Venice', 'Florence', 'Rotorua']
+	 Budapest 	 ['Berlin', 'Athens', 'Rabat', 'Sentosa', 'Marina Bay']
+	 Mashhad 	 ['Berlin', 'Helsinki', 'Florence', 'Tromsø', 'Sentosa']
+	 Tabriz 	 ['Stockholm', 'Lisbon', 'Dublin', 'Bratislava', 'Rotorua']
+	 Chengdu 	 ['Mexico City', 'Canberra', 'Jakarta', 'Tromsø', 'Busan']
+	 Arequipa 	 ['Jerusalem', 'Kyiv', 'Medellin', 'Geneva', 'Christchurch']
+	 Hamburg 	 ['Singapore', 'Kyiv', 'Zurich', 'Izmir']
+	 Alexandria 	 ['Singapore', 'Manila', 'Washington D.C.', 'Yazd', 'Guangzhou']
+Athens
+	 New Delhi 	 ['Wellington', 'Santiago', 'Singapore', 'Isfahan', 'Tromsø', 'Karachi']
+	 Islamabad 	 ['Madrid', 'Brussels', 'Kyiv', 'Bern', 'Venice', 'Florence', 'Rotorua']
+	 Budapest 	 ['Madrid', 'Berlin', 'Rabat', 'Sentosa', 'Marina Bay']
+Lisbon
+	 Rome 	 ['Washington D.C.', 'London', 'Chicago', 'Yazd']
+	 Stockholm 	 ['Seoul', 'Cancun', 'Vladivostok', 'Tabriz']
+	 Kathmandu 	 ['Paris', 'London', 'Bern', 'Los Angeles', 'Lahore', 'Munich', 'Christchurch']
+	 Tabriz 	 ['Madrid', 'Stockholm', 'Dublin', 'Bratislava', 'Rotorua']
+Florence
+	 Canberra 	 ['Wellington', 'Rabat', 'Washington D.C.', 'Montevideo', 'Los Angeles', 'Shanghai', 'Chengdu', 'Karachi', 'Luxor']
+	 Pretoria 	 ['Santiago', 'Milan', 'Isfahan', 'Zurich']
+	 Berlin 	 ['Warsaw', 'Budapest', 'Vladivostok', 'Chicago', 'Mashhad', 'Lahore', 'Aswan']
+	 Islamabad 	 ['Madrid', 'Athens', 'Brussels', 'Kyiv', 'Bern', 'Venice', 'Rotorua']
+	 Mashhad 	 ['Madrid', 'Berlin', 'Helsinki', 'Tromsø', 'Sentosa']
+Marseille
+	 Warsaw 	 ['Berlin', 'Nairobi', 'Brussels', 'Bratislava', 'Cancun', 'Chicago']
+	 Kyiv 	 ['Santiago', 'Manila', 'Islamabad', 'Venice', 'Arequipa', 'Hamburg']
+	 Venice 	 ['Washington D.C.', 'Kyiv', 'Vienna', 'Islamabad', 'Incheon', 'Luxor']
+	 New York City 	 ['Mexico City', 'Chicago', 'Geneva', 'Rotorua']
+	 Yazd 	 ['Rome', 'Kuala Lumpur', 'Cancun', 'Cusco', 'Busan', 'Frankfurt', 'Alexandria']
+	 Lyon 	 ['Zagreb', 'Cancun', 'Miami', "Xi'an", 'Sentosa']
+
+Tours:
+
+Madrid -> Islamabad -> Athens
+Athens -> Islamabad -> Florence
+Florence -> Islamabad -> Lisbon
+Lisbon -> Rome -> Yazd -> Marseille
+
+Best Tour:
+Madrid -> Islamabad -> Athens -> Islamabad -> Florence -> Islamabad -> Lisbon -> Rome -> Yazd -> Marseille

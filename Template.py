@@ -79,7 +79,7 @@ class App(tkinter.Tk):
         # TODO 5: create the knowledgebase of the city and its connected destinations using Adjacency_matrix.csv
         print('result2 ', results)
         locations = []
-        AdjMatrixDf = pd.read_csv("Adjacency_matrix.csv")
+        AdjMatrixDf = pd.read_csv("Bi_Adjacency_matrix.csv")
 
         AdjMatrixDf = lower_case_df(AdjMatrixDf.copy())
 

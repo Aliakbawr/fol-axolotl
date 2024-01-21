@@ -1,0 +1,37 @@
+Input:
+For my upcoming getaway, I'm envisioning luxury beaches that combine high-end comfort with a stunning seaside setting. Given my high status and desire for a short but opulent escape, I'm looking for a destination where white sandy beaches meet crystal clear waters, and every detail exudes luxury. From five-star beachfront resorts to private sunset sails, this brief vacation will be a lavish indulgence in coastal elegance, providing a perfect blend of relaxation and sumptuousness in a spectacular beach setting.
+
+1st query:
+['Paris', 'Copenhagen', 'Miami', 'Sentosa']
+
+
+Graphs:
+
+Paris
+	 Moscow 	 ['Hanoi', 'Zagreb', "Xi'an"]
+	 Kathmandu 	 ['Lisbon', 'London', 'Bern', 'Los Angeles', 'Lahore', 'Munich', 'Christchurch']
+	 Helsinki 	 ['Oslo', 'Prague', 'Manila', 'Seoul', 'Mashhad', 'Munich', 'Frankfurt']
+	 Lahore 	 ['Tokyo', 'Mexico City', 'Berlin', 'Kathmandu', 'Amsterdam', 'London', 'Rotorua']
+Copenhagen
+	 Lima 	 ['Colombo', 'Milan', 'Shiraz', 'Isfahan']
+	 Bern 	 ['Bangkok', 'Kathmandu', 'Nairobi', 'Kuala Lumpur', 'Islamabad']
+	 Chicago 	 ['Rome', 'Berlin', 'Beijing', 'Warsaw', 'Vladivostok', 'New York City', 'Marina Bay']
+Miami
+	 Tokyo 	 ['Bogota', 'Lahore']
+	 Rabat 	 ['Canberra', 'Budapest', 'Bursa']
+	 London 	 ['Rome', 'Kathmandu', 'Dhaka', 'Milan', 'Lahore', 'Frankfurt', 'Christchurch']
+	 Lyon 	 ['Zagreb', 'Cancun', "Xi'an", 'Marseille', 'Sentosa']
+	 Rotorua 	 ['Islamabad', 'New York City', 'Tabriz', 'Sentosa', 'Marina Bay', 'Lahore', 'Aswan']
+Sentosa
+	 Budapest 	 ['Madrid', 'Berlin', 'Athens', 'Rabat', 'Marina Bay']
+	 Mashhad 	 ['Madrid', 'Berlin', 'Helsinki', 'Florence', 'Tromsø']
+	 Lyon 	 ['Zagreb', 'Cancun', 'Miami', "Xi'an", 'Marseille']
+	 Rotorua 	 ['Islamabad', 'New York City', 'Miami', 'Tabriz', 'Marina Bay', 'Lahore', 'Aswan']
+Tours:
+Paris -> Kathmandu -> Bern -> Copenhagen
+Sentosa -> Rotorua -> Miami
+Sentosa -> Lyon -> Miami
+Paris -> Kathmandu -> London -> Miami
+
+Best Tour:
+Paris -> Kathmandu ->London -> Miami -> Lyon -> Sentosa
