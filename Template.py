@@ -6,6 +6,16 @@ from pyswip import Prolog
 import pandas as pd
 
 
+def lower_case_df(dataframe: pd.DataFrame):
+    """Lower-case all cell values in a pandas dataframe."""
+    for col in dataframe.columns:
+        if pd.api.types.is_string_dtype(dataframe[col]):
+            dataframe[col] = dataframe[col].str.lower()
+
+    dataframe.columns = dataframe.columns.str.lower()
+
+    return dataframe
+
 class App(tkinter.Tk):
     APP_NAME = "map_view_demo.py"
     WIDTH = 800
@@ -70,20 +80,43 @@ class App(tkinter.Tk):
         locations = []
         AdjMatrixDf = pd.read_csv("Adjacency_matrix.csv")
 
-        prolog.retractall("connected(_, _)")
-        prolog.assertz("path(X, Y) :- connected(X, Y)")  # Direct connection
-        prolog.assertz("path(X, Y) :- connected(X, Z), path(Z, Y)")  # Indirect connection
+        AdjMatrixDf = lower_case_df(AdjMatrixDf.copy())
 
+        # Clear any previous Prolog knowledge base
+        prolog.retractall("connected(_, _)")
+        prolog.retractall("path(_, _)")  # Also clear any existing path rules
+
+        # Assert Prolog rules for direct and indirect connections
+        prolog.assertz("path(X, Y) :- connected(X, Y)")  # Direct connection
+        prolog.assertz("path(X, Y) :- connected(X, Z), connected(Z, Y)")  # Indirect connection (recursive)
+
+        for j in range(AdjMatrixDf.shape[0]):
+            for k in range(AdjMatrixDf.shape[1]):
+                if AdjMatrixDf.iloc[j, k] == 1:
+                    CityJ = AdjMatrixDf.iloc[0,j]
+                    CityK = AdjMatrixDf.iloc[k - 1,0]
+                    query = f"connected(\"{CityJ}\", \"{CityK}\")"
+                    prolog.assertz(query)
+
+        # Extract city names and create Prolog facts for connected cities
         for result in results:
             city = result["City"]
             locations.append(city)
-            # TODO 5: create the knowledgebase of the city and its connected destinations using Adjacency_matrix.csv
 
-            for k in range(len(AdjMatrixDf.iloc[0]) - 1):
-                for j in range(len(AdjMatrixDf.iloc[0]) - 1):
-                    if AdjMatrixDf.iloc[k, j] == 1:
-                        prolog.assertz("connected(city{}, city{})".format(k, j))
+        connected_cities = []
+        # Query for paths between cities
+        if locations.__sizeof__() > 1:
+            for start_city in locations:
+                for end_city in locations:
+                    query = "path({}, {})".format(start_city, end_city)
+                    answer = prolog.query(query)
+                    if start_city != end_city and answer:
+                        print("Path found between {} and {}".format(start_city, end_city))
+                        # connected_cities.append(start_city)
+                        connected_cities.append(end_city)
 
+                    else:
+                        print("No path found between {} and {}".format(start_city, end_city))
 
         return locations
 
@@ -190,9 +223,9 @@ df_size = df.shape[0]  # Use number of rows
 prolog.retractall("destination(_, _, _, _, _, _, _, _, _, _, _, _, _)")
 
 for i in range(df_size):
-    fact = f"destination(\"{df['Destinations'][i]}\", \'{df['country'][i]}\', \'{df['region'][i]}\'," \
-           f" \'{df['Climate'][i]}\', \'{df['Budget'][i]}\', \'{df['Activity'][i]}\', \'{df['Demographics'][i]}\'," \
-           f" \'{df['Duration'][i]}\', \'{df['Cuisine'][i]}\', \'{df['History'][i]}\', \'{df['Natural Wonder'][i]}\'," \
+    fact = f"destination(\"{df['Destinations'][i]}\", \'{df['country'][i]}\', \'{df['region'][i]}\', " \
+           f" \'{df['Climate'][i]}\', \'{df['Budget'][i]}\', \'{df['Activity'][i]}\', \'{df['Demographics'][i]}\', " \
+           f" \'{df['Duration'][i]}\', \'{df['Cuisine'][i]}\', \'{df['History'][i]}\', \'{df['Natural Wonder'][i]}\', " \
            f" \'{df['Accommodation'][i]}\', \'{df['Language'][i]}\')"
     prolog.assertz(fact)
 
