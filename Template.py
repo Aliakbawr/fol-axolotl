@@ -76,6 +76,7 @@ class App(tkinter.Tk):
         self.marker_list = []  # Keeping track of markers
 
     def check_connections(self, results):
+        # TODO 5: create the knowledgebase of the city and its connected destinations using Adjacency_matrix.csv
         print('result2 ', results)
         locations = []
         AdjMatrixDf = pd.read_csv("Adjacency_matrix.csv")
