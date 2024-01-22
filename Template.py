@@ -17,6 +17,7 @@ def lower_case_df(dataframe: pd.DataFrame):
 
     return dataframe
 
+
 class App(tkinter.Tk):
     APP_NAME = "map_view_demo.py"
     WIDTH = 800
@@ -58,7 +59,6 @@ class App(tkinter.Tk):
         self.geometry(f"{self.WIDTH}x{self.HEIGHT}")
         # Here, we initialized the  marker path for allowing the task of mark deletion
         self.marker_path = None
-
 
         # Configure the grid
         self.grid_columnconfigure(0, weight=1)
@@ -102,12 +102,13 @@ class App(tkinter.Tk):
         prolog.assertz("path(X, Y) :- connected(X, Y)")  # Direct connection
         prolog.assertz("dualpath(X, Z, Y) :- connected(X, Z), path(Z, Y)")  # Indirect connection (recursive)
 
-
+        tmp = 0
         for CityJ in all_cities:
             for CityK in all_cities:
                 if CityJ != CityK and AdjMatrixDf.loc[tmp, CityK] == 1:
                     query = f"connected(\"{CityJ}\", \"{CityK}\")"
                     prolog.assertz(query)
+            tmp += 1
 
         # Extract city names and create Prolog facts for connected cities
         for city in res:
@@ -119,8 +120,8 @@ class App(tkinter.Tk):
             for start_city in locations:
                 for end_city in locations:
                     query = f"dualpath({start_city}, Z, {end_city})"
-                    answer = list(prolog.query(query))
-                    print(answer)
+                    answer = prolog.query(query)
+                    print(next(answer))
                     if start_city != end_city and answer:
                         for path in answer:
                             print("Path found between {} and {}: {}".format(start_city, end_city, path))
