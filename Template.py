@@ -1,3 +1,4 @@
+import random
 import sys
 import tkinter
 import tkinter.messagebox
@@ -55,6 +56,9 @@ class App(tkinter.Tk):
 
         self.title(self.APP_NAME)
         self.geometry(f"{self.WIDTH}x{self.HEIGHT}")
+        # Here, we initialized the  marker path for allowing the task of mark deletion
+        self.marker_path = None
+
 
         # Configure the grid
         self.grid_columnconfigure(0, weight=1)
@@ -121,7 +125,18 @@ class App(tkinter.Tk):
 
         return locations
 
+    def clear_markers(self):
+        """Clear all markers and paths from the map."""
+        for marker in self.marker_list:
+            self.map_widget.delete(marker)
+        self.marker_list.clear()
+
+        if self.marker_path is not None:
+            self.map_widget.delete(self.marker_path)
+            self.marker_path = None
+
     def process_text(self):
+        self.clear_markers()
         # Extract locations from the user's input
         text = self.text_area.get("1.0", 'end-1c')
         locations = self.extract_locations(text)  # Extract locations (you may use a more complex method here)
@@ -138,6 +153,7 @@ class App(tkinter.Tk):
 
         values_str = ", ".join(values_list)
         query_str = f"destination(City, {values_str})"
+        print(query_str)
         results = list(prolog.query(query_str))
         print(results)
 
@@ -178,7 +194,7 @@ class App(tkinter.Tk):
         # Convert the text to lowercase and split it into words
         text = text.lower()
         # Define the separators
-        separators = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "+", "=",
+        separators = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "+", "=",
                       "~", "`", "{", "}", "[", "]", ";", ":", "'", "\"", "/", ".", ",",
                       " ", "\t", "\n"]
 
@@ -208,6 +224,18 @@ class App(tkinter.Tk):
                 for value in unique_attributes[key]:
                     if word == value:
                         important_words_found[key].append(word)
+
+        important_words_found = {k: list(set(v)) for k, v in important_words_found.items()}
+
+        for key, values in important_words_found.items():
+            # Check if the list has more than one value
+            if len(values) > 1:
+                # Randomly choose one value
+                chosen_value = random.choice(values)
+                # Update the dictionary
+                important_words_found[key] = [chosen_value]
+
+        print(important_words_found)
 
         return important_words_found
 
