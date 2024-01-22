@@ -80,32 +80,37 @@ class App(tkinter.Tk):
         self.marker_list = []  # Keeping track of markers
 
     def check_connections(self, results):
+        res = list()
+        for result in results:
+            x = str(result['City'].decode("utf-8"))
+            res.append(x)
         # TODO 5: create the knowledgebase of the city and its connected destinations using Adjacency_matrix.csv
         print('result2 ', results)
         locations = []
         AdjMatrixDf = pd.read_csv("Bi_Adjacency_matrix.csv")
 
         AdjMatrixDf = lower_case_df(AdjMatrixDf.copy())
+        all_cities = AdjMatrixDf.columns.tolist()
+        all_cities.remove('destinations')
 
         # Clear any previous Prolog knowledge base
         prolog.retractall("connected(_, _)")
         prolog.retractall("path(_, _)")  # Also clear any existing path rules
+        prolog.retractall("dualpath(_, _, _)")
 
         # Assert Prolog rules for direct and indirect connections
         prolog.assertz("path(X, Y) :- connected(X, Y)")  # Direct connection
-        prolog.assertz("path(X, Y) :- connected(X, Z), path(Z, Y)")  # Indirect connection (recursive)
+        prolog.assertz("dualpath(X, Z, Y) :- connected(X, Z), path(Z, Y)")  # Indirect connection (recursive)
 
-        for j in range(AdjMatrixDf.shape[0]):
-            for k in range(AdjMatrixDf.shape[1]):
-                if AdjMatrixDf.iloc[j, k] == 1:
-                    CityJ = AdjMatrixDf.iloc[0,j]
-                    CityK = AdjMatrixDf.iloc[k - 1,0]
+
+        for CityJ in all_cities:
+            for CityK in all_cities:
+                if CityJ != CityK and AdjMatrixDf.loc[tmp, CityK] == 1:
                     query = f"connected(\"{CityJ}\", \"{CityK}\")"
                     prolog.assertz(query)
 
         # Extract city names and create Prolog facts for connected cities
-        for result in results:
-            city = result["City"]
+        for city in res:
             locations.append(city)
 
         connected_cities = []
@@ -113,17 +118,19 @@ class App(tkinter.Tk):
         if locations.__sizeof__() > 1:
             for start_city in locations:
                 for end_city in locations:
-                    query = "path({}, {})".format(start_city, end_city)
-                    answer = prolog.query(query)
+                    query = f"dualpath({start_city}, Z, {end_city})"
+                    answer = list(prolog.query(query))
+                    print(answer)
                     if start_city != end_city and answer:
-                        print("Path found between {} and {}".format(start_city, end_city))
-                        connected_cities.append(start_city)
-                        connected_cities.append(end_city)
-
+                        for path in answer:
+                            print("Path found between {} and {}: {}".format(start_city, end_city, path))
+                            connected_cities.append(start_city)
+                            connected_cities.extend(path)
+                            connected_cities.append(end_city)
                     else:
                         print("No path found between {} and {}".format(start_city, end_city))
 
-        return locations
+        return connected_cities
 
     def clear_markers(self):
         """Clear all markers and paths from the map."""
